@@ -47,6 +47,15 @@ async function run() {
       res.send(result)
     })
 
+    // get classes by instructor email
+
+    app.get("/classes/:email" , async(req,res) =>{
+      const email = req.params.email;
+      const query = {instructorEmail: email}
+      const result = await classesCollection.find(query).toArray()
+      res.send(result);
+    })
+
     // Start the Express server
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}`);
