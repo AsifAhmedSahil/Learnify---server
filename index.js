@@ -34,12 +34,18 @@ async function run() {
     const usersCollection = database.collection("users");
     const classesCollection = database.collection("classes");
 
-    // Setup your routes here
+    // Setup classes routes here
     app.post("/new-class", async (req, res) => {
       const newClasses = req.body;
       const result = await classesCollection.insertOne(newClasses);
       res.send(result);
     });
+
+    // get classes data
+    app.get("/classes" , async(req,res) =>{
+      const result = await classesCollection.find().toArray()
+      res.send(result)
+    })
 
     // Start the Express server
     app.listen(port, () => {
