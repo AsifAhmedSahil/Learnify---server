@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require("cors");
 require('dotenv').config()
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId, ClientSession } = require('mongodb');
 const port = 3000
 
 
@@ -77,6 +77,13 @@ async function run() {
         },
       };
       const result = await classesCollection.updateOne(filter,updateDoc,options);
+      res.send(result);
+    })
+
+    // get approved class
+    app.get("/approved-classes",async(req,res) =>{
+      const query = { status: "approved"}
+      const result = await classesCollection.find(query).toArray()
       res.send(result);
     })
 
