@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require("cors");
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = 3000
 
 
@@ -53,6 +53,30 @@ async function run() {
       const email = req.params.email;
       const query = {instructorEmail: email}
       const result = await classesCollection.find(query).toArray()
+      res.send(result);
+    })
+
+    // manage classes
+    app.get("/class-manage",async(req,res) =>{
+      const result = await classesCollection.find().toArray()
+      res.send(result);
+    })
+
+    // update classes status and reason
+    app.patch("/change-status/:id" , async(req,res) =>{
+      const id = req.params.id;
+      const status = req.body.status;
+      const reason = req.body.reason;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const updateDoc = {
+        $set:{
+          status: status,
+          reason: reason,
+
+        },
+      };
+      const result = await classesCollection.updateOne(filter,updateDoc,options);
       res.send(result);
     })
 
