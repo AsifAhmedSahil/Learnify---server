@@ -33,6 +33,7 @@ async function run() {
     const database = client.db("learnifyDB");
     const usersCollection = database.collection("users");
     const classesCollection = database.collection("classes");
+    const cartCollection = database.collection("carts");
 
     // Setup classes routes here
     app.post("/new-class", async (req, res) => {
@@ -116,6 +117,21 @@ async function run() {
       const result = await classesCollection.updateOne(filter,updateDoc,options)
       res.send(result);
     })
+
+
+    // ------------------------------ Cart Routes apis --------------------------
+
+    // cart add items data
+
+    app.post("/add-items",async(req,res) =>{
+      const newItems = req.body;
+      const result = await cartCollection.insertOne(newItems);
+      res.send(result);
+    })
+
+    
+
+
 
 
 
