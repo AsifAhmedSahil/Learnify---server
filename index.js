@@ -87,6 +87,39 @@ async function run() {
       res.send(result);
     })
 
+    // get single class data
+    app.get("/class/:id" , async(req,res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await classesCollection.findOne(query);
+      res.send(result);
+
+    })
+
+    // update class details (all data)
+    app.put("/update-class/:id",async(req,res)=>{
+      const id = req.params.id;
+      const updateclass = req.body;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const updateDoc = {
+        $set:{
+          name: updateclass.name,
+          description: updateclass.description,
+          price: updateclass.price,
+          availableSeats: parseInt(updateclass.availableSeats),
+          videoLink: updateclass.videoLink,
+          status: "pending",
+
+        },
+      };
+      const result = await classesCollection.updateOne(filter,updateDoc,options)
+      res.send(result);
+    })
+
+
+
+
     // Start the Express server
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}`);
