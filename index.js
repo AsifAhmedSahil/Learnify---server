@@ -156,7 +156,15 @@ async function run() {
       res.send(result);
     })
 
-    
+    // delete cart items
+
+    app.delete("/delete-cart-items/:id",async(req,res) =>{
+      const id = req.params.id;
+      const query = {classId: id}
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    })
+
 
 
 
