@@ -143,6 +143,21 @@ async function run() {
       res.send(result)
     })
 
+    // get card info by user email
+
+    app.get("/cart/:email" , async(req,res)=>{
+      const email = req.params.email
+      const query  = {userMail: email}
+      const projection =  {classId:1}
+      const carts = await cartCollection.find(query,{projection:projection})
+      const classId = carts.map((cart) => new ObjectId(cart.classId))
+      const query2 = {_id: {$in: classId}}
+      const result = await classesCollection.find(query2).toArray()
+      res.send(result);
+    })
+
+    
+
 
 
 
