@@ -188,6 +188,30 @@ async function run() {
 
     })
 
+    // post payment info
+
+    app.post("/payment-info",async(req,res) =>{
+      const paymentInfo = req.body;
+      const classesId = paymentInfo.classesId;
+      const userEmail = paymentInfo.userEmail;
+      const singleClassId = req.query.classId;
+      let query;
+      if(singleClassId){
+        query = { classesId: singleClassId , userMail: userEmail}
+      } else {
+        query = { classId: {$in: classesId }}
+      }
+    })
+
+    // ******************************** PAYMENT ROUTES ********************************
+    
+    // Enrolment Routes***
+
+    app.get("/popular_classes" , async(req,res) =>{
+      const result = await classesCollection.find().sort({totalEnrolled: -1}).limit(6).toArray()
+      res.send(result);
+    })
+
 
 
 
