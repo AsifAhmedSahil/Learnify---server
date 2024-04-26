@@ -205,7 +205,7 @@ async function run() {
 
     // ******************************** PAYMENT ROUTES ********************************
     
-    // Enrolment Routes***
+    // Enrolment Route***
 
     app.get("/popular_classes" , async(req,res) =>{
       const result = await classesCollection.find().sort({totalEnrolled: -1}).limit(6).toArray()
