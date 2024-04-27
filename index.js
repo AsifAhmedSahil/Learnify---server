@@ -212,6 +212,17 @@ async function run() {
       res.send(result);
     })
 
+    app.get("/popular-instructor" , async(req,res) =>{
+      const pipeline= [
+        {
+          $group:{
+            _id: "$instructorEmail",
+            totalEnrolled: {$sum: "$totalEnrolled"}
+          }
+        }
+      ]
+    })
+
 
 
 
