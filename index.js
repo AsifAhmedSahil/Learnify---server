@@ -35,6 +35,7 @@ async function run() {
     const usersCollection = database.collection("users");
     const classesCollection = database.collection("classes");
     const cartCollection = database.collection("carts");
+    const enrolledCollection = database.collection("enrolled");
 
     // Setup classes routes here
     app.post("/new-class", async (req, res) => {
@@ -212,6 +213,9 @@ async function run() {
       res.send(result);
     })
 
+
+    // ************popular instructor  is not complete*************
+
     app.get("/popular-instructor" , async(req,res) =>{
       const pipeline= [
         {
@@ -221,6 +225,28 @@ async function run() {
           }
         }
       ]
+    })
+
+    // admin - stats
+
+    app.get("admin-stats",async(req,res)=>{
+      const approvedClasses = ( (await classesCollection.find({status: 'approved'})).toArray()).length;
+      const pendingClasses =  ((await classesCollection.find({status: 'pending'})).toArray()).length;
+      const instructors = ((await usersCollection.find({status: 'instructor'})).toArray()).length;
+      const totalClasses = (await classesCollection.find().toArray()).length
+      const totalEnrolled = (await enrolledCollection.find().toArray()).length
+
+      const result = {
+        approvedClasses,
+        pendingClasses,
+        instructors,
+        totalClasses,
+        totalEnrolled
+      }
+
+      res.send(result)
+
+
     })
 
 
