@@ -249,6 +249,15 @@ async function run() {
 
     })
 
+    // get all instructor
+
+    app.get("/instructors",async (req,res) =>{
+      const result = await usersCollection.find({role:"instructor"}).toArray()
+      res.send(result)
+    })
+
+    
+
 
 
 
