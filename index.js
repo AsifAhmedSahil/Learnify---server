@@ -38,6 +38,21 @@ async function run() {
     const enrolledCollection = database.collection("enrolled");
     const appliedCollection = database.collection("appliedInstructor");
 
+    // route for new users****
+
+    app.post("/new-user",async(req,res)=>{
+      const newUser = req.body;
+      const result = await usersCollection.insertOne(newUser) 
+      res.send(result);
+    })
+
+    app.get("/users",async(req,res) =>{
+      const result = await usersCollection.find({}).toArray()
+      res.send(result);
+    })
+
+    
+
     // Setup classes routes here
     app.post("/new-class", async (req, res) => {
       const newClasses = req.body;
