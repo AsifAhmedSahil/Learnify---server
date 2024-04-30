@@ -120,7 +120,7 @@ async function run() {
     })
 
     // delete user
-    app.delete("/delete-user/:id",verifyJWT,async(req,res) =>{
+    app.delete("/delete-user/:id",verifyJWT,verifyAdmin,async(req,res) =>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
       const result = await usersCollection.deleteOne(query)
@@ -128,7 +128,7 @@ async function run() {
     })
 
     // update user 
-    app.put("/update-user/:id",async(req,res) =>{
+    app.put("/update-user/:id",verifyJWT,verifyAdmin,async(req,res) =>{
       const id = req.params.id;
       const updateUser = req.body;
       const filter = {_id: new ObjectId(id)}
@@ -151,7 +151,7 @@ async function run() {
 
 
     // Setup classes routes here
-    app.post("/new-class", async (req, res) => {
+    app.post("/new-class",verifyJWT,verifyInstructor, async (req, res) => {
       const newClasses = req.body;
       const result = await classesCollection.insertOne(newClasses);
       res.send(result);
@@ -165,7 +165,7 @@ async function run() {
 
     // get classes by instructor email
 
-    app.get("/classes/:email" , async(req,res) =>{
+    app.get("/classes/:email" ,verifyJWT,verifyInstructor, async(req,res) =>{
       const email = req.params.email;
       const query = {instructorEmail: email}
       const result = await classesCollection.find(query).toArray()
@@ -179,7 +179,7 @@ async function run() {
     })
 
     // update classes status and reason
-    app.patch("/change-status/:id" , async(req,res) =>{
+    app.patch("/change-status/:id" ,verifyJWT,verifyAdmin, async(req,res) =>{
       const id = req.params.id;
       const status = req.body.status;
       const reason = req.body.reason;
@@ -213,7 +213,7 @@ async function run() {
     })
 
     // update class details (all data)
-    app.put("/update-class/:id",async(req,res)=>{
+    app.put("/update-class/:id",verifyJWT,verifyInstructor,async(req,res)=>{
       const id = req.params.id;
       const updateclass = req.body;
       const filter = {_id: new ObjectId(id)}
@@ -238,7 +238,7 @@ async function run() {
 
     // cart add items data
 
-    app.post("/add-items",async(req,res) =>{
+    app.post("/add-items",verifyJWT,async(req,res) =>{
       const newItems = req.body;
       const result = await cartCollection.insertOne(newItems);
       res.send(result);
@@ -246,7 +246,7 @@ async function run() {
 
     // get cart item by id
 
-    app.get("/cart-item/:id" , async(req,res) =>{
+    app.get("/cart-item/:id" ,verifyJWT, async(req,res) =>{
       const id = req.params.id;
       const email = req.body;
       const query = {
@@ -273,7 +273,7 @@ async function run() {
 
     // delete cart items
 
-    app.delete("/delete-cart-items/:id",async(req,res) =>{
+    app.delete("/delete-cart-items/:id",verifyJWT,async(req,res) =>{
       const id = req.params.id;
       const query = {classId: id}
       const result = await cartCollection.deleteOne(query);
@@ -342,7 +342,7 @@ async function run() {
 
     // admin - stats
 
-    app.get("admin-stats",async(req,res)=>{
+    app.get("admin-stats",verifyJWT,verifyAdmin,async(req,res)=>{
       const approvedClasses = ( (await classesCollection.find({status: 'approved'})).toArray()).length;
       const pendingClasses =  ((await classesCollection.find({status: 'pending'})).toArray()).length;
       const instructors = ((await usersCollection.find({status: 'instructor'})).toArray()).length;
@@ -371,7 +371,7 @@ async function run() {
 
     // enrolled classes pipeline
 
-    app.get("/enrolled-classes/:email",async(req,res) =>{
+    app.get("/enrolled-classes/:email",verifyJWT,async(req,res) =>{
       const email = req.params.email;
       const query = {userEmail: email}
       const pipeline = [
