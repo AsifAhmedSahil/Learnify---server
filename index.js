@@ -4,6 +4,7 @@ const cors = require("cors");
 const stripe = require("stripe")(process.env.PAYMENT_SECRET);
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId, ClientSession } = require('mongodb');
+const e = require('express');
 const port = 3000
 
 
@@ -56,10 +57,18 @@ async function run() {
     app.get("/users/:id",async(req,res) =>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
-      const result = await usersCollection.find(query).toArray()
+      const result = await usersCollection.findOne(query)
       res.send(result);
     })
 
+    // get user by email
+
+    app.get("/user/:email",async(req,res) =>{
+      const email = req.params.email
+      const query = {email:email}
+      const result = await usersCollection.findOne(query)
+      res.send(result)
+    })
 
 
     // Setup classes routes here
