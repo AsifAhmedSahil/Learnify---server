@@ -36,6 +36,7 @@ async function run() {
     const classesCollection = database.collection("classes");
     const cartCollection = database.collection("carts");
     const enrolledCollection = database.collection("enrolled");
+    const appliedCollection = database.collection("appliedInstructor");
 
     // Setup classes routes here
     app.post("/new-class", async (req, res) => {
@@ -296,6 +297,20 @@ async function run() {
       ]
 
       const result = await enrolledCollection.aggregate(pipeline).toArray()
+      res.send(result);
+    })
+
+    // applied instructor
+
+    app.post("/ass-instructor",async(req,res) =>{
+      const data = req.body;
+      const result = await appliedCollection.insertOne(data)
+      res.send(result);
+    })
+
+    app.get("/applied-instructor/:email",async(req,res) =>{
+      const email = req.params.email;
+      const result = await appliedCollection.findOne({email})
       res.send(result);
     })
 
