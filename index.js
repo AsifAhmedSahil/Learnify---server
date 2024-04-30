@@ -51,7 +51,16 @@ async function run() {
       res.send(result);
     })
 
-    
+
+    // get users by id***
+    app.get("/users/:id",async(req,res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await usersCollection.find(query).toArray()
+      res.send(result);
+    })
+
+
 
     // Setup classes routes here
     app.post("/new-class", async (req, res) => {
