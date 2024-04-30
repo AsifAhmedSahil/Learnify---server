@@ -1,8 +1,9 @@
 const express = require('express')
 const app = express()
 const cors = require("cors");
-const stripe = require("stripe")(process.env.PAYMENT_SECRET);
 require('dotenv').config()
+const stripe = require("stripe")(process.env.PAYMENT_SECRET);
+const jwt = require("jsonwebtoken")
 const { MongoClient, ServerApiVersion, ObjectId, ClientSession } = require('mongodb');
 const e = require('express');
 const port = 3000
@@ -40,6 +41,14 @@ async function run() {
     const appliedCollection = database.collection("appliedInstructor");
 
     // route for new users****
+
+    app.post("/api/set-token",async(req,res) =>{
+      const user = req.body;
+      const token = jwt.sign(user,process.env.token,{
+        expiresIn: '50d'
+      });
+      res.send({token})
+    })
 
     app.post("/new-user",async(req,res)=>{
       const newUser = req.body;
