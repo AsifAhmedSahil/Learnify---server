@@ -13,8 +13,23 @@ const port = 3000
 app.use(cors());
 app.use(express.json());
 
-// pass = g7ULokrOYMZzIBsV
-// uswer = learnify
+// verify JWT ***
+
+const verifyJWT = (req,res,next) =>{
+  const authorization = req.headers.authorization;
+  if(!authorization){
+    return res.status(401).send({message: "invalid authorization"})
+  }
+  const token = authorization?.split(" ")[1]
+  jwt.verify(token,process.env.token,(err,decoded)=>{
+    if(err){
+      return res.status(403).send({message: "Forbidden Access"})
+    }
+    req.decoded = decoded
+    next();
+
+  })
+}
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.quaequt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -50,6 +65,20 @@ async function run() {
       res.send({token})
     })
 
+    // middleware for admin and instructors
+
+    const verifyAdmin = async(req,res,next) =>{
+      const email = req.decoded.email;
+      const query = {email:email}
+      const user = await usersCollection.findOne(query)
+      if(user.role === "admin"){
+        next()
+      }
+      else{
+        return res.status(401).send({message: "Forbidden Access"})
+      }
+    }
+
     app.post("/new-user",async(req,res)=>{
       const newUser = req.body;
       const result = await usersCollection.insertOne(newUser) 
@@ -72,7 +101,7 @@ async function run() {
 
     // get user by email
 
-    app.get("/user/:email",async(req,res) =>{
+    app.get("/user/:email",verifyJWT,async(req,res) =>{
       const email = req.params.email
       const query = {email:email}
       const result = await usersCollection.findOne(query)
@@ -80,7 +109,7 @@ async function run() {
     })
 
     // delete user
-    app.delete("/delete-user/:id",async(req,res) =>{
+    app.delete("/delete-user/:id",verifyJWT,async(req,res) =>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
       const result = await usersCollection.deleteOne(query)
