@@ -71,10 +71,32 @@ async function run() {
     })
 
     // delete user
-    app.delete("/user/:id",async(req,res) =>{
+    app.delete("/delete-user/:id",async(req,res) =>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
       const result = await usersCollection.deleteOne(query)
+      res.send(result)
+    })
+
+    // update user 
+    app.put("/update-user/:id",async(req,res) =>{
+      const id = req.params.id;
+      const updateUser = req.body;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true}
+      const updateDoc = {
+        $set: {
+          name: updateUser.name,
+          email:updateUser.email,
+          address: updateUser.address,
+          role: updateUser.option,
+          about: updateUser.about,
+          photoUrl: updateUser.photoUrl,
+          skills: updateUser.skills ? updateUser.skills : null
+        }
+      }
+
+      const result = await usersCollection.updateOne(filter,updateDoc,options)
       res.send(result)
     })
 
