@@ -75,7 +75,18 @@ async function run() {
         next()
       }
       else{
-        return res.status(401).send({message: "Forbidden Access"})
+        return res.status(401).send({message: "unauthorized Access"})
+      }
+    }
+    const verifyInstructor = async(req,res,next) =>{
+      const email = req.decoded.email;
+      const query = {email:email}
+      const user = await usersCollection.findOne(query)
+      if(user.role === "instructor"){
+        next()
+      }
+      else{
+        return res.status(401).send({message: "unauthorized Access"})
       }
     }
 
